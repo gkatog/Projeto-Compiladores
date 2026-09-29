@@ -1,0 +1,13 @@
+digraph G { graph [rankdir=LR, fontname="DejaVu Sans", fontsize=16, labelloc=t, pad=0.3, nodesep=0.5, ranksep=0.7];
+node [fontname="DejaVu Sans", fontsize=12, shape=circle, style=filled, fillcolor="#FFFFFF", width=1.1, fixedsize=true];
+edge [fontname="DejaVu Sans", fontsize=11];
+start [shape=point, width=0.15, fixedsize=true];
+label="AFD — Identificadores e Palavras Reservadas\n(Scanner.java: case Q0_INICIO, case Q1_ID)";
+Q0 [label="Q0_INICIO"];
+Q1 [label="Q1_ID", shape=doublecircle];
+T  [label="ID ou palavra reservada\n(busca na tabela KEYWORDS,\nlexema em maiúsculas)", shape=box, style="rounded,filled", fillcolor="#E3F2E1", color="#2E7D32", fixedsize=false, width=0];
+start -> Q0;
+Q0 -> Q1 [label="letra | '_'"];
+Q1 -> Q1 [label="letra | dígito | '_'"];
+Q1 -> T  [label="outro (não consome)", style=dashed];
+}
