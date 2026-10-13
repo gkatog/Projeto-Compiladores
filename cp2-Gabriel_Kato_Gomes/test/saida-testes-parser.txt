@@ -1,0 +1,515 @@
+==================================================
+   SUÍTE DE TESTES - CHECKPOINT 2 (PARSER)
+==================================================
+
+--- VÁLIDO: os cinco tipos básicos, declarações e expressões ---
+  [OK]    programa aceito, sem erros léxicos nem sintáticos
+
+--- VÁLIDO: IF/ELSE, IF sem ELSE, WHILE aninhado e ';' ---
+  [OK]    programa aceito, sem erros léxicos nem sintáticos
+
+--- VÁLIDO: funções, procedimentos, chamadas e RETURN com e sem valor ---
+  [OK]    programa aceito, sem erros léxicos nem sintáticos
+
+--- VÁLIDO: script completo (palavras reservadas em minúsculas) ---
+  [OK]    programa aceito, sem erros léxicos nem sintáticos
+
+--- ERRO: WHILE sem ENDDO ---
+     1 | FUNCTION Laco()
+     2 |     WHILE x < 10
+     3 |         x := x + 1
+     4 | FUNCTION Outra()
+     5 |     RETURN()
+  Erro sintático (linha 4, coluna 1): esperado ENDDO, encontrado 'FUNCTION'
+  [OK]    1 erro(s) sintático(s) reportado(s) (obtido: 1)
+  [OK]    nenhum erro léxico
+  [OK]    erro "esperado ENDDO, encontrado 'FUNCTION'" em 4:1
+
+--- ERRO: declaração sem tipo ---
+     1 | FUNCTION F()
+     2 |     LOCAL nX := 1
+     3 |     nX := nX + 1
+     4 |     RETURN()
+  Erro sintático (linha 2, coluna 11): esperado um tipo (INT, DOUBLE, BOOL, CHAR ou STRING), encontrado 'nX'
+  [OK]    1 erro(s) sintático(s) reportado(s) (obtido: 1)
+  [OK]    nenhum erro léxico
+  [OK]    erro "esperado um tipo (INT, DOUBLE, BOOL, CHAR ou STRING), encontrado 'nX'" em 2:11
+
+--- ERRO: parêntese não fechado ---
+     1 | FUNCTION F()
+     2 |     x := (a + b * 2
+     3 |     y := 3
+     4 |     RETURN()
+  Erro sintático (linha 3, coluna 5): esperado ')', encontrado 'y'
+  [OK]    1 erro(s) sintático(s) reportado(s) (obtido: 1)
+  [OK]    nenhum erro léxico
+  [OK]    erro "esperado ')', encontrado 'y'" em 3:5
+
+--- ERRO: expressão incompleta antes do ENDIF ---
+     1 | FUNCTION F()
+     2 |     IF x > 0
+     3 |         x := x *
+     4 |     ENDIF
+     5 |     RETURN()
+  Erro sintático (linha 4, coluna 5): esperado operando, encontrado 'ENDIF'
+  [OK]    1 erro(s) sintático(s) reportado(s) (obtido: 1)
+  [OK]    nenhum erro léxico
+  [OK]    erro "esperado operando, encontrado 'ENDIF'" em 4:5
+
+--- ERRO: parâmetro sem tipo ---
+     1 | FUNCTION INT Dobro(n)
+     2 |     RETURN(n * 2)
+  Erro sintático (linha 1, coluna 20): esperado tipo do parâmetro ou ')', encontrado 'n'
+  [OK]    1 erro(s) sintático(s) reportado(s) (obtido: 1)
+  [OK]    nenhum erro léxico
+  [OK]    erro "esperado tipo do parâmetro ou ')', encontrado 'n'" em 1:20
+
+--- ERRO: comando fora de função ---
+     1 | x := 1
+     2 | FUNCTION F()
+     3 |     RETURN()
+  Erro sintático (linha 1, coluna 1): esperado FUNCTION, encontrado 'x'
+  [OK]    1 erro(s) sintático(s) reportado(s) (obtido: 1)
+  [OK]    nenhum erro léxico
+  [OK]    erro "esperado FUNCTION, encontrado 'x'" em 1:1
+
+--- MÚLTIPLOS ERROS: traço completo, no formato do exemplo da Aula 6 ---
+     1 | FUNCTION F()
+     2 |     x := a + * b
+     3 |     RETURN(x))
+  Traço da análise:
+    parsePrograma(): lookahead='FUNCTION'
+      parseFuncao(): lookahead='FUNCTION'
+        consome 'FUNCTION'
+        parseTipoRet(): lookahead='F'
+          ε: 'F' está em FOLLOW(TipoRet)
+        consome 'F'
+        consome '('
+        parseParams(): lookahead=')'
+          ε: ')' está em FOLLOW(Params)
+        consome ')'
+        parseListaCmd(): lookahead='x'
+          parseCmd(): lookahead='x'
+            parseCmdBase(): lookahead='x'
+              parseCmdId(): lookahead='x'
+                consome 'x'
+                parseSufixoId(): lookahead=':='
+                  consome ':='
+                  parseExpr(): lookahead='a'
+                    parseExprAnd(): lookahead='a'
+                      parseExprNot(): lookahead='a'
+                        parseExprRel(): lookahead='a'
+                          parseExprAdd(): lookahead='a'
+                            parseTermo(): lookahead='a'
+                              parseUnario(): lookahead='a'
+                                parsePrimario(): lookahead='a'
+                                  consome 'a'
+                                  parseSufixoChamada(): lookahead='+'
+                                    ε: '+' está em FOLLOW(SufixoChamada)
+                              parseTermoResto(): lookahead='+'
+                                ε: '+' está em FOLLOW(TermoResto)
+                            parseExprAddResto(): lookahead='+'
+                              parseOpAdd(): lookahead='+'
+                                consome '+'
+                              parseTermo(): lookahead='*'
+                                parseUnario(): lookahead='*'
+                                  ERRO -- Erro sintático (linha 2, coluna 14): esperado operando, encontrado '*'
+                                  sincronizar(FOLLOW(Unario) + âncoras)
+                                    lookahead '*' já está no conjunto, não descarta nada -- retorna
+                                parseTermoResto(): lookahead='*'
+                                  parseOpMul(): lookahead='*'
+                                    consome '*'
+                                  parseUnario(): lookahead='b'
+                                    parsePrimario(): lookahead='b'
+                                      consome 'b'
+                                      parseSufixoChamada(): lookahead='RETURN'
+                                        ε: 'RETURN' está em FOLLOW(SufixoChamada)
+                                  parseTermoResto(): lookahead='RETURN'
+                                    ε: 'RETURN' está em FOLLOW(TermoResto)
+                              parseExprAddResto(): lookahead='RETURN'
+                                ε: 'RETURN' está em FOLLOW(ExprAddResto)
+                          parseExprRelResto(): lookahead='RETURN'
+                            ε: 'RETURN' está em FOLLOW(ExprRelResto)
+                      parseExprAndResto(): lookahead='RETURN'
+                        ε: 'RETURN' está em FOLLOW(ExprAndResto)
+                    parseExprOrResto(): lookahead='RETURN'
+                      ε: 'RETURN' está em FOLLOW(ExprOrResto)
+            parsePontoVirgula(): lookahead='RETURN'
+              ε: 'RETURN' está em FOLLOW(PontoVirgula)
+          parseListaCmd(): lookahead='RETURN'
+            parseCmd(): lookahead='RETURN'
+              parseCmdBase(): lookahead='RETURN'
+                parseCmdReturn(): lookahead='RETURN'
+                  consome 'RETURN'
+                  consome '('
+                  parseRetValor(): lookahead='x'
+                    parseExpr(): lookahead='x'
+                      parseExprAnd(): lookahead='x'
+                        parseExprNot(): lookahead='x'
+                          parseExprRel(): lookahead='x'
+                            parseExprAdd(): lookahead='x'
+                              parseTermo(): lookahead='x'
+                                parseUnario(): lookahead='x'
+                                  parsePrimario(): lookahead='x'
+                                    consome 'x'
+                                    parseSufixoChamada(): lookahead=')'
+                                      ε: ')' está em FOLLOW(SufixoChamada)
+                                parseTermoResto(): lookahead=')'
+                                  ε: ')' está em FOLLOW(TermoResto)
+                              parseExprAddResto(): lookahead=')'
+                                ε: ')' está em FOLLOW(ExprAddResto)
+                            parseExprRelResto(): lookahead=')'
+                              ε: ')' está em FOLLOW(ExprRelResto)
+                        parseExprAndResto(): lookahead=')'
+                          ε: ')' está em FOLLOW(ExprAndResto)
+                      parseExprOrResto(): lookahead=')'
+                        ε: ')' está em FOLLOW(ExprOrResto)
+                  consome ')'
+              parsePontoVirgula(): lookahead=')'
+                ERRO -- Erro sintático (linha 3, coluna 14): esperado ';' ou início de novo comando, encontrado ')'
+                sincronizar(FOLLOW(PontoVirgula) + âncoras)
+                  descarta ')' (linha 3)
+                  retoma em fim do arquivo
+            parseListaCmd(): lookahead=fim do arquivo
+              ε: fim do arquivo está em FOLLOW(ListaCmd)
+      parseListaFuncoes(): lookahead=fim do arquivo
+        ε: fim do arquivo está em FOLLOW(ListaFuncoes)
+      consome fim do arquivo
+  [OK]    2 erro(s) sintático(s) reportado(s) (obtido: 2)
+  [OK]    nenhum erro léxico
+  [OK]    erro "esperado operando, encontrado '*'" em 2:14
+  [OK]    erro "esperado ';' ou início de novo comando, encontrado ')'" em 3:14
+
+--- MÚLTIPLOS ERROS: quatro erros numa única rodada (traço resumido) ---
+     1 | FUNCTION INT Calc(INT n
+     2 |     LOCAL INT r := n *
+     3 |     WHILE r > 0
+     4 |         r := r - 1 )
+     5 |     ENDDO
+     6 |     ENDIF
+     7 |     RETURN(r)
+     8 | FUNCTION Ok()
+     9 |     RETURN()
+  Traço da análise:
+    ERRO -- Erro sintático (linha 2, coluna 5): esperado ',' ou ')' na lista de parâmetros, encontrado 'LOCAL'
+    sincronizar(FOLLOW(ParamsResto) + âncoras)
+      lookahead 'LOCAL' já está no conjunto, não descarta nada -- retorna
+    (erro em cascata suprimido: esperado ')', encontrado 'LOCAL')
+    sincronizar(FOLLOW(Funcao) + âncoras)
+      lookahead 'LOCAL' já está no conjunto, não descarta nada -- retorna
+    ERRO -- Erro sintático (linha 3, coluna 5): esperado operando, encontrado 'WHILE'
+    sincronizar(FOLLOW(Unario) + âncoras)
+      lookahead 'WHILE' já está no conjunto, não descarta nada -- retorna
+    ERRO -- Erro sintático (linha 4, coluna 20): esperado ';' ou início de novo comando, encontrado ')'
+    sincronizar(FOLLOW(PontoVirgula) + âncoras)
+      descarta ')' (linha 4)
+      retoma em 'ENDDO'
+    ERRO -- Erro sintático (linha 6, coluna 5): esperado FUNCTION ou fim do arquivo, encontrado 'ENDIF'
+    sincronizar(FIRST ∪ FOLLOW de ListaFuncoes)
+      descarta 'ENDIF' (linha 6)
+      descarta 'RETURN' (linha 7)
+      descarta '(' (linha 7)
+      descarta 'r' (linha 7)
+      descarta ')' (linha 7)
+      retoma em 'FUNCTION'
+  [OK]    4 erro(s) sintático(s) reportado(s) (obtido: 4)
+  [OK]    nenhum erro léxico
+  [OK]    erro "esperado ',' ou ')' na lista de parâmetros, encontrado 'LOCAL'" em 2:5
+  [OK]    erro "esperado operando, encontrado 'WHILE'" em 3:5
+  [OK]    erro "esperado ';' ou início de novo comando, encontrado ')'" em 4:20
+  [OK]    erro "esperado FUNCTION ou fim do arquivo, encontrado 'ENDIF'" em 6:5
+
+--- MÚLTIPLOS ERROS: um erro em cada uma de três funções (traço resumido) ---
+     1 | FUNCTION A()
+     2 |     LOCAL INT x := 1 +
+     3 |     RETURN()
+     4 | FUNCTION INT B(INT n)
+     5 |     IF n > 0
+     6 |         n := n - 1
+     7 |     RETURN(n)
+     8 | FUNCTION C()
+     9 |     Log(1, , 2)
+    10 |     RETURN()
+  Traço da análise:
+    ERRO -- Erro sintático (linha 3, coluna 5): esperado operando, encontrado 'RETURN'
+    sincronizar(FOLLOW(Unario) + âncoras)
+      lookahead 'RETURN' já está no conjunto, não descarta nada -- retorna
+    ERRO -- Erro sintático (linha 8, coluna 1): esperado ELSE ou ENDIF, encontrado 'FUNCTION'
+    sincronizar(FOLLOW(Senao) + âncoras)
+      lookahead 'FUNCTION' já está no conjunto, não descarta nada -- retorna
+    (erro em cascata suprimido: esperado ENDIF, encontrado 'FUNCTION')
+    sincronizar(FOLLOW(CmdIf) + âncoras)
+      lookahead 'FUNCTION' já está no conjunto, não descarta nada -- retorna
+    ERRO -- Erro sintático (linha 9, coluna 12): esperado expressão, encontrado ','
+    sincronizar(FOLLOW(ExprNot) + âncoras)
+      lookahead ',' já está no conjunto, não descarta nada -- retorna
+  [OK]    3 erro(s) sintático(s) reportado(s) (obtido: 3)
+  [OK]    nenhum erro léxico
+  [OK]    erro "esperado operando, encontrado 'RETURN'" em 3:5
+  [OK]    erro "esperado ELSE ou ENDIF, encontrado 'FUNCTION'" em 8:1
+  [OK]    erro "esperado expressão, encontrado ','" em 9:12
+
+--- ROBUSTEZ: 5000 sequências aleatórias de tokens, nenhuma trava o parser ---
+  [OK]    nenhuma entrada travou o parser (travaram: 0)
+  [OK]    nenhuma entrada gerou exceção (exceções: 0)
+
+==================================================
+   RESULTADO: 39 verificações aprovadas, 0 reprovadas
+====================================================================================================
+   SUÍTE DE TESTES - CHECKPOINT 2 (PARSER)
+==================================================
+
+--- VÁLIDO: os cinco tipos básicos, declarações e expressões ---
+  [OK]    programa aceito, sem erros léxicos nem sintáticos
+
+--- VÁLIDO: IF/ELSE, IF sem ELSE, WHILE aninhado e ';' ---
+  [OK]    programa aceito, sem erros léxicos nem sintáticos
+
+--- VÁLIDO: funções, procedimentos, chamadas e RETURN com e sem valor ---
+  [OK]    programa aceito, sem erros léxicos nem sintáticos
+
+--- VÁLIDO: script completo (palavras reservadas em minúsculas) ---
+  [OK]    programa aceito, sem erros léxicos nem sintáticos
+
+--- ERRO: WHILE sem ENDDO ---
+     1 | FUNCTION Laco()
+     2 |     WHILE x < 10
+     3 |         x := x + 1
+     4 | FUNCTION Outra()
+     5 |     RETURN()
+  Erro sintático (linha 4, coluna 1): esperado ENDDO, encontrado 'FUNCTION'
+  [OK]    1 erro(s) sintático(s) reportado(s) (obtido: 1)
+  [OK]    nenhum erro léxico
+  [OK]    erro "esperado ENDDO, encontrado 'FUNCTION'" em 4:1
+
+--- ERRO: declaração sem tipo ---
+     1 | FUNCTION F()
+     2 |     LOCAL nX := 1
+     3 |     nX := nX + 1
+     4 |     RETURN()
+  Erro sintático (linha 2, coluna 11): esperado um tipo (INT, DOUBLE, BOOL, CHAR ou STRING), encontrado 'nX'
+  [OK]    1 erro(s) sintático(s) reportado(s) (obtido: 1)
+  [OK]    nenhum erro léxico
+  [OK]    erro "esperado um tipo (INT, DOUBLE, BOOL, CHAR ou STRING), encontrado 'nX'" em 2:11
+
+--- ERRO: parêntese não fechado ---
+     1 | FUNCTION F()
+     2 |     x := (a + b * 2
+     3 |     y := 3
+     4 |     RETURN()
+  Erro sintático (linha 3, coluna 5): esperado ')', encontrado 'y'
+  [OK]    1 erro(s) sintático(s) reportado(s) (obtido: 1)
+  [OK]    nenhum erro léxico
+  [OK]    erro "esperado ')', encontrado 'y'" em 3:5
+
+--- ERRO: expressão incompleta antes do ENDIF ---
+     1 | FUNCTION F()
+     2 |     IF x > 0
+     3 |         x := x *
+     4 |     ENDIF
+     5 |     RETURN()
+  Erro sintático (linha 4, coluna 5): esperado operando, encontrado 'ENDIF'
+  [OK]    1 erro(s) sintático(s) reportado(s) (obtido: 1)
+  [OK]    nenhum erro léxico
+  [OK]    erro "esperado operando, encontrado 'ENDIF'" em 4:5
+
+--- ERRO: parâmetro sem tipo ---
+     1 | FUNCTION INT Dobro(n)
+     2 |     RETURN(n * 2)
+  Erro sintático (linha 1, coluna 20): esperado tipo do parâmetro ou ')', encontrado 'n'
+  [OK]    1 erro(s) sintático(s) reportado(s) (obtido: 1)
+  [OK]    nenhum erro léxico
+  [OK]    erro "esperado tipo do parâmetro ou ')', encontrado 'n'" em 1:20
+
+--- ERRO: comando fora de função ---
+     1 | x := 1
+     2 | FUNCTION F()
+     3 |     RETURN()
+  Erro sintático (linha 1, coluna 1): esperado FUNCTION, encontrado 'x'
+  [OK]    1 erro(s) sintático(s) reportado(s) (obtido: 1)
+  [OK]    nenhum erro léxico
+  [OK]    erro "esperado FUNCTION, encontrado 'x'" em 1:1
+
+--- MÚLTIPLOS ERROS: traço completo, no formato do exemplo da Aula 6 ---
+     1 | FUNCTION F()
+     2 |     x := a + * b
+     3 |     RETURN(x))
+  Traço da análise:
+    parsePrograma(): lookahead='FUNCTION'
+      parseFuncao(): lookahead='FUNCTION'
+        consome 'FUNCTION'
+        parseTipoRet(): lookahead='F'
+          ε: 'F' está em FOLLOW(TipoRet)
+        consome 'F'
+        consome '('
+        parseParams(): lookahead=')'
+          ε: ')' está em FOLLOW(Params)
+        consome ')'
+        parseListaCmd(): lookahead='x'
+          parseCmd(): lookahead='x'
+            parseCmdBase(): lookahead='x'
+              parseCmdId(): lookahead='x'
+                consome 'x'
+                parseSufixoId(): lookahead=':='
+                  consome ':='
+                  parseExpr(): lookahead='a'
+                    parseExprAnd(): lookahead='a'
+                      parseExprNot(): lookahead='a'
+                        parseExprRel(): lookahead='a'
+                          parseExprAdd(): lookahead='a'
+                            parseTermo(): lookahead='a'
+                              parseUnario(): lookahead='a'
+                                parsePrimario(): lookahead='a'
+                                  consome 'a'
+                                  parseSufixoChamada(): lookahead='+'
+                                    ε: '+' está em FOLLOW(SufixoChamada)
+                              parseTermoResto(): lookahead='+'
+                                ε: '+' está em FOLLOW(TermoResto)
+                            parseExprAddResto(): lookahead='+'
+                              parseOpAdd(): lookahead='+'
+                                consome '+'
+                              parseTermo(): lookahead='*'
+                                parseUnario(): lookahead='*'
+                                  ERRO -- Erro sintático (linha 2, coluna 14): esperado operando, encontrado '*'
+                                  sincronizar(FOLLOW(Unario) + âncoras)
+                                    lookahead '*' já está no conjunto, não descarta nada -- retorna
+                                parseTermoResto(): lookahead='*'
+                                  parseOpMul(): lookahead='*'
+                                    consome '*'
+                                  parseUnario(): lookahead='b'
+                                    parsePrimario(): lookahead='b'
+                                      consome 'b'
+                                      parseSufixoChamada(): lookahead='RETURN'
+                                        ε: 'RETURN' está em FOLLOW(SufixoChamada)
+                                  parseTermoResto(): lookahead='RETURN'
+                                    ε: 'RETURN' está em FOLLOW(TermoResto)
+                              parseExprAddResto(): lookahead='RETURN'
+                                ε: 'RETURN' está em FOLLOW(ExprAddResto)
+                          parseExprRelResto(): lookahead='RETURN'
+                            ε: 'RETURN' está em FOLLOW(ExprRelResto)
+                      parseExprAndResto(): lookahead='RETURN'
+                        ε: 'RETURN' está em FOLLOW(ExprAndResto)
+                    parseExprOrResto(): lookahead='RETURN'
+                      ε: 'RETURN' está em FOLLOW(ExprOrResto)
+            parsePontoVirgula(): lookahead='RETURN'
+              ε: 'RETURN' está em FOLLOW(PontoVirgula)
+          parseListaCmd(): lookahead='RETURN'
+            parseCmd(): lookahead='RETURN'
+              parseCmdBase(): lookahead='RETURN'
+                parseCmdReturn(): lookahead='RETURN'
+                  consome 'RETURN'
+                  consome '('
+                  parseRetValor(): lookahead='x'
+                    parseExpr(): lookahead='x'
+                      parseExprAnd(): lookahead='x'
+                        parseExprNot(): lookahead='x'
+                          parseExprRel(): lookahead='x'
+                            parseExprAdd(): lookahead='x'
+                              parseTermo(): lookahead='x'
+                                parseUnario(): lookahead='x'
+                                  parsePrimario(): lookahead='x'
+                                    consome 'x'
+                                    parseSufixoChamada(): lookahead=')'
+                                      ε: ')' está em FOLLOW(SufixoChamada)
+                                parseTermoResto(): lookahead=')'
+                                  ε: ')' está em FOLLOW(TermoResto)
+                              parseExprAddResto(): lookahead=')'
+                                ε: ')' está em FOLLOW(ExprAddResto)
+                            parseExprRelResto(): lookahead=')'
+                              ε: ')' está em FOLLOW(ExprRelResto)
+                        parseExprAndResto(): lookahead=')'
+                          ε: ')' está em FOLLOW(ExprAndResto)
+                      parseExprOrResto(): lookahead=')'
+                        ε: ')' está em FOLLOW(ExprOrResto)
+                  consome ')'
+              parsePontoVirgula(): lookahead=')'
+                ERRO -- Erro sintático (linha 3, coluna 14): esperado ';' ou início de novo comando, encontrado ')'
+                sincronizar(FOLLOW(PontoVirgula) + âncoras)
+                  descarta ')' (linha 3)
+                  retoma em fim do arquivo
+            parseListaCmd(): lookahead=fim do arquivo
+              ε: fim do arquivo está em FOLLOW(ListaCmd)
+      parseListaFuncoes(): lookahead=fim do arquivo
+        ε: fim do arquivo está em FOLLOW(ListaFuncoes)
+      consome fim do arquivo
+  [OK]    2 erro(s) sintático(s) reportado(s) (obtido: 2)
+  [OK]    nenhum erro léxico
+  [OK]    erro "esperado operando, encontrado '*'" em 2:14
+  [OK]    erro "esperado ';' ou início de novo comando, encontrado ')'" em 3:14
+
+--- MÚLTIPLOS ERROS: quatro erros numa única rodada (traço resumido) ---
+     1 | FUNCTION INT Calc(INT n
+     2 |     LOCAL INT r := n *
+     3 |     WHILE r > 0
+     4 |         r := r - 1 )
+     5 |     ENDDO
+     6 |     ENDIF
+     7 |     RETURN(r)
+     8 | FUNCTION Ok()
+     9 |     RETURN()
+  Traço da análise:
+    ERRO -- Erro sintático (linha 2, coluna 5): esperado ',' ou ')' na lista de parâmetros, encontrado 'LOCAL'
+    sincronizar(FOLLOW(ParamsResto) + âncoras)
+      lookahead 'LOCAL' já está no conjunto, não descarta nada -- retorna
+    (erro em cascata suprimido: esperado ')', encontrado 'LOCAL')
+    sincronizar(FOLLOW(Funcao) + âncoras)
+      lookahead 'LOCAL' já está no conjunto, não descarta nada -- retorna
+    ERRO -- Erro sintático (linha 3, coluna 5): esperado operando, encontrado 'WHILE'
+    sincronizar(FOLLOW(Unario) + âncoras)
+      lookahead 'WHILE' já está no conjunto, não descarta nada -- retorna
+    ERRO -- Erro sintático (linha 4, coluna 20): esperado ';' ou início de novo comando, encontrado ')'
+    sincronizar(FOLLOW(PontoVirgula) + âncoras)
+      descarta ')' (linha 4)
+      retoma em 'ENDDO'
+    ERRO -- Erro sintático (linha 6, coluna 5): esperado FUNCTION ou fim do arquivo, encontrado 'ENDIF'
+    sincronizar(FIRST ∪ FOLLOW de ListaFuncoes)
+      descarta 'ENDIF' (linha 6)
+      descarta 'RETURN' (linha 7)
+      descarta '(' (linha 7)
+      descarta 'r' (linha 7)
+      descarta ')' (linha 7)
+      retoma em 'FUNCTION'
+  [OK]    4 erro(s) sintático(s) reportado(s) (obtido: 4)
+  [OK]    nenhum erro léxico
+  [OK]    erro "esperado ',' ou ')' na lista de parâmetros, encontrado 'LOCAL'" em 2:5
+  [OK]    erro "esperado operando, encontrado 'WHILE'" em 3:5
+  [OK]    erro "esperado ';' ou início de novo comando, encontrado ')'" em 4:20
+  [OK]    erro "esperado FUNCTION ou fim do arquivo, encontrado 'ENDIF'" em 6:5
+
+--- MÚLTIPLOS ERROS: um erro em cada uma de três funções (traço resumido) ---
+     1 | FUNCTION A()
+     2 |     LOCAL INT x := 1 +
+     3 |     RETURN()
+     4 | FUNCTION INT B(INT n)
+     5 |     IF n > 0
+     6 |         n := n - 1
+     7 |     RETURN(n)
+     8 | FUNCTION C()
+     9 |     Log(1, , 2)
+    10 |     RETURN()
+  Traço da análise:
+    ERRO -- Erro sintático (linha 3, coluna 5): esperado operando, encontrado 'RETURN'
+    sincronizar(FOLLOW(Unario) + âncoras)
+      lookahead 'RETURN' já está no conjunto, não descarta nada -- retorna
+    ERRO -- Erro sintático (linha 8, coluna 1): esperado ELSE ou ENDIF, encontrado 'FUNCTION'
+    sincronizar(FOLLOW(Senao) + âncoras)
+      lookahead 'FUNCTION' já está no conjunto, não descarta nada -- retorna
+    (erro em cascata suprimido: esperado ENDIF, encontrado 'FUNCTION')
+    sincronizar(FOLLOW(CmdIf) + âncoras)
+      lookahead 'FUNCTION' já está no conjunto, não descarta nada -- retorna
+    ERRO -- Erro sintático (linha 9, coluna 12): esperado expressão, encontrado ','
+    sincronizar(FOLLOW(ExprNot) + âncoras)
+      lookahead ',' já está no conjunto, não descarta nada -- retorna
+  [OK]    3 erro(s) sintático(s) reportado(s) (obtido: 3)
+  [OK]    nenhum erro léxico
+  [OK]    erro "esperado operando, encontrado 'RETURN'" em 3:5
+  [OK]    erro "esperado ELSE ou ENDIF, encontrado 'FUNCTION'" em 8:1
+  [OK]    erro "esperado expressão, encontrado ','" em 9:12
+
+--- ROBUSTEZ: 5000 sequências aleatórias de tokens, nenhuma trava o parser ---
+  [OK]    nenhuma entrada travou o parser (travaram: 0)
+  [OK]    nenhuma entrada gerou exceção (exceções: 0)
+
+==================================================
+   RESULTADO: 39 verificações aprovadas, 0 reprovadas
+==================================================
