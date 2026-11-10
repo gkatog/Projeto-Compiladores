@@ -1,0 +1,141 @@
+==================================================
+   SUÍTE DE TESTES - CHECKPOINT 1 (ANALISADOR LÉXICO)
+==================================================
+
+--- Identificadores ---
+  [OK]    tipos [ID, ID, ID, ID, ID]
+  [OK]    lexemas [total, x1, contaItens, _status, n_valor_2]
+  [OK]    nenhum erro léxico
+
+--- Palavras reservadas (case-insensitive) ---
+  [OK]    tipos [INT, DOUBLE, BOOL, CHAR, STRING_TYPE, LOCAL, IF, ELSE, ENDIF, WHILE, ENDDO, FUNCTION, RETURN]
+  [OK]    tipos [ID, ID, ID]
+
+--- Strings (aspas duplas e simples) ---
+  [OK]    tipos [LIT_STRING, LIT_STRING, LIT_STRING, LIT_STRING, LIT_STRING]
+  [OK]    lexemas ["ok", 'Protheus', "linha 1", "", "tem 'aspa' simples"]
+  [OK]    nenhum erro léxico
+
+--- Operadores e delimitadores ---
+  [OK]    tipos [PLUS, MINUS, MULT, DIV, ASSIGN, EQ, EQ, NEQ, LT, LE, GT, GE, AND, OR, NOT, LPAREN, RPAREN, COMMA, SEMI]
+  [OK]    nenhum erro léxico
+  [OK]    tipos [AND, OR, NOT]
+
+--- Literais numéricos ---
+  [OK]    tipos [NUM, NUM, NUM, NUM, NUM]
+  [OK]    lexemas [10, 3.14, 0, 150.75, 007]
+  [OK]    nenhum erro léxico
+
+--- Literais lógicos ---
+  [OK]    tipos [LOGICAL, LOGICAL, LOGICAL, LOGICAL]
+
+--- Maximal munch (sem espaços entre os tokens) ---
+  [OK]    tipos [ID, ASSIGN, ID, EQ, ID, LE, ID, NEQ, ID, GE, ID, EQ, ID]
+  [OK]    tipos [NUM, LOGICAL]
+  [OK]    lexemas [1.5, .T.]
+  [OK]    tipos [ID, AND, ID]
+
+--- Linha e coluna dos tokens ---
+  [OK]    'x' em 1:1
+  [OK]    ':=' em 1:3
+  [OK]    'y' em 2:3
+  [OK]    string em 2:8
+
+--- ERRO: string não fechada até o EOF ---
+Erro léxico (linha 1, coluna 6): string não fechada até o fim do arquivo
+  [OK]    tipos [ID, ASSIGN]
+  [OK]    erro "string não fechada até o fim do arquivo" em 1:6
+
+--- ERRO: string não fechada até o fim da linha (com recuperação) ---
+Erro léxico (linha 1, coluna 9): string não fechada até o fim da linha
+  [OK]    tipos [ID, ASSIGN, ID, ASSIGN, NUM]
+  [OK]    recuperação: 'nNovaLinha' reconhecido na linha 2
+  [OK]    erro "string não fechada até o fim da linha" em 1:9
+
+--- ERRO: caractere fora do alfabeto (com recuperação) ---
+Erro léxico (linha 1, coluna 9): caractere fora do alfabeto '@'
+Erro léxico (linha 1, coluna 13): caractere fora do alfabeto '$'
+Erro léxico (linha 1, coluna 18): caractere fora do alfabeto 'ç'
+  [OK]    tipos [ID, ASSIGN, NUM, ID, NUM]
+  [OK]    3 erros reportados ('@', '$' e 'ç')
+  [OK]    erro "caractere fora do alfabeto '@'" em 1:9
+  [OK]    erro "caractere fora do alfabeto '$'" em 1:13
+  [OK]    erro "caractere fora do alfabeto 'ç'" em 1:18
+
+--- ERRO: comentário de bloco não fechado até o EOF ---
+Erro léxico (linha 1, coluna 8): comentário de bloco não fechado até o fim do arquivo
+  [OK]    tipos [ID, ASSIGN, NUM]
+  [OK]    erro "comentário de bloco não fechado até o fim do arquivo" em 1:8
+
+--- ERRO: operadores inválidos (':' sozinho, '.' inválido) ---
+Erro léxico (linha 1, coluna 3): ':' deve ser seguido de '=' (atribuição ':=')
+  [OK]    tipos [ID, ID]
+  [OK]    erro "':' deve ser seguido de '=' (atribuição ':=')" em 1:3
+Erro léxico (linha 1, coluna 3): '.' não inicia um operador lógico nem literal lógico válido
+  [OK]    tipos [ID, ID, ID]
+  [OK]    1 erro reportado para '.AND' sem ponto final
+Erro léxico (linha 1, coluna 3): operador/literal delimitado por ponto desconhecido '.XOR.'
+  [OK]    tipos [ID, ID]
+  [OK]    1 erro reportado para '.XOR.'
+
+--- Linha realista com comentários misturados ---
+  [OK]    tipos [LOCAL, ID, ASSIGN, ID, MULT, NUM, PLUS, NUM, AND, ID]
+  [OK]    nenhum erro léxico
+
+--- Script Mini-ADVPL completo ---
+    [FUNCTION, 'FUNCTION', linha: 2, col: 1]
+    [ID, 'ControlaEstoque', linha: 2, col: 10]
+    [LPAREN, '(', linha: 2, col: 25]
+    [ID, 'nQtd', linha: 2, col: 26]
+    [RPAREN, ')', linha: 2, col: 30]
+    [LOCAL, 'LOCAL', linha: 3, col: 5]
+    [ID, 'nEstoqueAtual', linha: 3, col: 11]
+    [ASSIGN, ':=', linha: 3, col: 25]
+    [NUM, '150.75', linha: 3, col: 28]
+    [LOCAL, 'LOCAL', linha: 4, col: 5]
+    [ID, 'nLimiteMinimo', linha: 4, col: 11]
+    [ASSIGN, ':=', linha: 4, col: 25]
+    [NUM, '50', linha: 4, col: 28]
+    [LOCAL, 'LOCAL', linha: 5, col: 5]
+    [ID, 'lAtivo', linha: 5, col: 11]
+    [ASSIGN, ':=', linha: 5, col: 18]
+    [LOGICAL, '.T.', linha: 5, col: 21]
+    [WHILE, 'WHILE', linha: 9, col: 5]
+    [ID, 'nEstoqueAtual', linha: 9, col: 11]
+    [LE, '<=', linha: 9, col: 25]
+    [ID, 'nLimiteMinimo', linha: 9, col: 28]
+    [AND, '.AND.', linha: 9, col: 42]
+    [ID, 'lAtivo', linha: 9, col: 48]
+    [EQ, '==', linha: 9, col: 55]
+    [LOGICAL, '.T.', linha: 9, col: 58]
+    [ID, 'nEstoqueAtual', linha: 10, col: 9]
+    [ASSIGN, ':=', linha: 10, col: 23]
+    [ID, 'nEstoqueAtual', linha: 10, col: 26]
+    [PLUS, '+', linha: 10, col: 40]
+    [NUM, '10.0', linha: 10, col: 42]
+    [IF, 'IF', linha: 11, col: 9]
+    [ID, 'nEstoqueAtual', linha: 11, col: 12]
+    [NEQ, '<>', linha: 11, col: 26]
+    [NUM, '150', linha: 11, col: 29]
+    [ID, 'nEstoqueAtual', linha: 12, col: 13]
+    [ASSIGN, ':=', linha: 12, col: 27]
+    [ID, 'nEstoqueAtual', linha: 12, col: 30]
+    [PLUS, '+', linha: 12, col: 44]
+    [NUM, '1', linha: 12, col: 46]
+    [ELSE, 'ELSE', linha: 13, col: 9]
+    [ID, 'lAtivo', linha: 14, col: 13]
+    [ASSIGN, ':=', linha: 14, col: 20]
+    [LOGICAL, '.F.', linha: 14, col: 23]
+    [ENDIF, 'ENDIF', linha: 15, col: 9]
+    [ENDDO, 'ENDDO', linha: 16, col: 5]
+    [RETURN, 'RETURN', linha: 18, col: 5]
+    [ID, 'lAtivo', linha: 18, col: 12]
+  [OK]    47 tokens gerados (obtido: 47)
+  [OK]    nenhum erro léxico
+  [OK]    primeiro token é FUNCTION na linha 2
+  [OK]    último token é 'lAtivo' na linha 18
+  [OK]    WHILE na linha 9 (comentário de bloco multilinha contou as linhas)
+
+==================================================
+   RESULTADO: 48 verificações aprovadas, 0 reprovadas
+==================================================

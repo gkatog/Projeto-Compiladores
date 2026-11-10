@@ -1,0 +1,29 @@
+Programa
+  FuncDecl(Soma, INT)
+    Param(n, INT)
+    Bloco
+      Local(INT)
+        Var(s)
+          Int(0)
+      While
+        Bin(>)
+          Id(n)
+          Int(0)
+        Bloco
+          If
+            Bin(<>)
+              Id(n)
+              Int(3)
+            Bloco
+              Atrib
+                Id(s)
+                Bin(+)
+                  Id(s)
+                  Id(n)
+          Atrib
+            Id(n)
+            Bin(-)
+              Id(n)
+              Int(1)
+      Return
+        Id(s)

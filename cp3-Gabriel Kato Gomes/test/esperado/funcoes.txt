@@ -1,0 +1,48 @@
+Programa
+  FuncDecl(Media, DOUBLE)
+    Param(nA, INT)
+    Param(nB, INT)
+    Bloco
+      Return
+        Bin(/)
+          Bin(+)
+            Id(nA)
+            Id(nB)
+          Int(2)
+  FuncDecl(Avisa, sem retorno)
+    Param(cMsg, STRING)
+    Param(cNivel, CHAR)
+    Bloco
+      If
+        Bin(==)
+          Id(cNivel)
+          Char('E')
+        Bloco
+          ChamadaCmd
+            Chamada(Log)
+              String("ERRO: ")
+              Id(cMsg)
+      Return
+  FuncDecl(Principal, BOOL)
+    Bloco
+      Local(DOUBLE)
+        Var(nM)
+          Bin(+)
+            Chamada(Media)
+              Chamada(Media)
+                Int(1)
+                Int(2)
+              Int(3)
+            Int(1)
+      ChamadaCmd
+        Chamada(Avisa)
+          String("media calculada")
+          Char('I')
+      ChamadaCmd
+        Chamada(Limpa)
+      Return
+        Bin(>)
+          Id(nM)
+          Int(0)
+  FuncDecl(Vazia, sem retorno)
+    Bloco

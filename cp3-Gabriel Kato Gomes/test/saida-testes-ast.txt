@@ -1,0 +1,71 @@
+==================================================
+   SUÍTE DE TESTES - CHECKPOINT 3 (AST E VISITOR)
+==================================================
+
+--- ÁRVORE ESPERADA: tipos e declarações (test/esperado/tipos.txt) ---
+  [OK]    programa aceito e árvore construída
+  [OK]    impressão igual à árvore esperada
+
+--- ÁRVORE ESPERADA: controle (IF/ELSE, WHILE) (test/esperado/controle.txt) ---
+  [OK]    programa aceito e árvore construída
+  [OK]    impressão igual à árvore esperada
+
+--- ÁRVORE ESPERADA: funções e procedimentos (test/esperado/funcoes.txt) ---
+  [OK]    programa aceito e árvore construída
+  [OK]    impressão igual à árvore esperada
+
+--- ÁRVORE ESPERADA: programa da árvore desenhada no ast-design.md (test/esperado/soma.txt) ---
+  [OK]    programa aceito e árvore construída
+  [OK]    impressão igual à árvore esperada
+
+--- PRECEDÊNCIA E ASSOCIATIVIDADE ---
+  [OK]    árvore de a + b * c
+  [OK]    árvore de a - b - c
+  [OK]    árvore de a - (b - c)
+  [OK]    a - b - c e a - (b - c) produzem árvores diferentes
+  [OK]    árvore de a .OR. b .AND. c < d
+  [OK]    árvore de -a * b
+
+--- A AST NÃO É A ÁRVORE DE DERIVAÇÃO: parênteses redundantes ---
+  [OK]    árvore de (((a)))
+  [OK]    (((a))) tem a mesma árvore que a
+  [OK]    ((a + b)) * (c) tem a mesma árvore que (a + b) * c
+
+--- IDA E VOLTA: ler, reimprimir, ler o reimpresso e reimprimir de novo ---
+  [OK]    ida e volta de "tipos"
+  [OK]    ida e volta de "controle"
+  [OK]    ida e volta de "funcoes"
+  [OK]    ida e volta de "soma"
+  [OK]    ida e volta de "script do CP2"
+  [OK]    ida e volta de "casos de borda"
+  Exemplo de reimpressão (programa "soma"):
+    | FUNCTION INT Soma(INT n)
+    |     LOCAL INT s := 0
+    |     WHILE (n > 0)
+    |         IF (n <> 3)
+    |             s := (s + n)
+    |         ENDIF
+    |         n := (n - 1)
+    |     ENDDO
+    |     RETURN(s)
+
+--- REGRESSÃO DO CP2: os programas inválidos continuam rejeitados, com os mesmos erros ---
+  [OK]    WHILE sem ENDDO: rejeitado, árvore null e os mesmos 1 erro(s)
+  [OK]    declaração sem tipo: rejeitado, árvore null e os mesmos 1 erro(s)
+  [OK]    parêntese não fechado: rejeitado, árvore null e os mesmos 1 erro(s)
+  [OK]    expressão incompleta: rejeitado, árvore null e os mesmos 1 erro(s)
+  [OK]    parâmetro sem tipo: rejeitado, árvore null e os mesmos 1 erro(s)
+  [OK]    comando fora de função: rejeitado, árvore null e os mesmos 1 erro(s)
+  [OK]    dois erros (traço da Aula 6): rejeitado, árvore null e os mesmos 2 erro(s)
+  [OK]    quatro erros na mesma função: rejeitado, árvore null e os mesmos 4 erro(s)
+  [OK]    um erro em cada uma de três funções: rejeitado, árvore null e os mesmos 3 erro(s)
+
+--- ROBUSTEZ: 10000 entradas aleatórias e mutações dos programas válidos ---
+  [OK]    nenhuma entrada travou o parser (travaram: 0)
+  [OK]    nenhuma exceção escapou, nem NullPointerException (exceções: 0)
+  [OK]    árvore != null exatamente quando o programa é aceito (incoerentes: 0)
+  [OK]    ida e volta funciona para todos os 500 programas aceitos
+
+==================================================
+   RESULTADO: 36 verificações aprovadas, 0 reprovadas
+==================================================

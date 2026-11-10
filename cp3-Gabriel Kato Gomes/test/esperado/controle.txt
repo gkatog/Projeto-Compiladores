@@ -1,0 +1,47 @@
+Programa
+  FuncDecl(Controle, INT)
+    Param(n, INT)
+    Bloco
+      Local(INT)
+        Var(i)
+          Int(0)
+        Var(nPares)
+          Int(0)
+      While
+        Bin(<)
+          Id(i)
+          Id(n)
+        Bloco
+          If
+            Bin(==)
+              Bin(*)
+                Bin(/)
+                  Id(i)
+                  Int(2)
+                Int(2)
+              Id(i)
+            Bloco
+              Atrib
+                Id(nPares)
+                Bin(+)
+                  Id(nPares)
+                  Int(1)
+            Bloco
+              If
+                Bin(>)
+                  Id(i)
+                  Int(100)
+                Bloco
+                  Atrib
+                    Id(i)
+                    Id(n)
+          Atrib
+            Id(i)
+            Bin(+)
+              Id(i)
+              Int(1)
+          Atrib
+            Id(n)
+            Id(n)
+      Return
+        Id(nPares)
